@@ -22,6 +22,24 @@ class FixtureTests(unittest.TestCase):
                 actual = cumbin(fixture["input"], fixture["spec"])
                 self.assert_rows_almost_equal(actual, fixture["expected"])
 
+    def test_single_bin_when_cumulative_total_equals_bin_size(self) -> None:
+        rows = cumbin(
+            [
+                {"label": "A", "value": 12},
+                {"label": "B", "value": 3},
+                {"label": "C", "value": 17},
+            ],
+            {"value": "value", "binSize": 32},
+        )
+
+        self.assertEqual(len(rows), 3)
+        self.assertEqual(sorted({row["bin"] for row in rows}), [0])
+        self.assertEqual([row["amount"] for row in rows], [12.0, 3.0, 17.0])
+        self.assertEqual(
+            [(row["bin_start"], row["bin_end"]) for row in rows],
+            [(0.0, 32.0), (0.0, 32.0), (0.0, 32.0)],
+        )
+
     def assert_rows_almost_equal(
         self,
         actual: list[dict[str, object]],
@@ -52,4 +70,3 @@ class FixtureTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

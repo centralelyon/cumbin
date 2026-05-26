@@ -98,3 +98,7 @@ npm run test:py
 ```
 
 The tests intentionally read the same files under `fixtures/`, so behavioral changes must update the shared contract rather than one language wrapper.
+
+## Credits
+
+Original idea by [@fil](https://observablehq.com/@fil/cumulative-binning) in Observable.

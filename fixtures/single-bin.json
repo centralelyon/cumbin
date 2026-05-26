@@ -1,0 +1,50 @@
+{
+  "name": "single bin",
+  "input": [
+    { "label": "A", "value": 12 },
+    { "label": "B", "value": 3 },
+    { "label": "C", "value": 17 }
+  ],
+  "spec": { "value": "value", "binSize": 32 },
+  "expected": [
+    {
+      "label": "A",
+      "value": 12,
+      "bin": 0,
+      "bin_start": 0,
+      "bin_end": 32,
+      "amount": 12,
+      "source_index": 0,
+      "source_start": 0,
+      "source_end": 12,
+      "source_amount": 12,
+      "source_fraction": 1
+    },
+    {
+      "label": "B",
+      "value": 3,
+      "bin": 0,
+      "bin_start": 0,
+      "bin_end": 32,
+      "amount": 3,
+      "source_index": 1,
+      "source_start": 12,
+      "source_end": 15,
+      "source_amount": 3,
+      "source_fraction": 1
+    },
+    {
+      "label": "C",
+      "value": 17,
+      "bin": 0,
+      "bin_start": 0,
+      "bin_end": 32,
+      "amount": 17,
+      "source_index": 2,
+      "source_start": 15,
+      "source_end": 32,
+      "source_amount": 17,
+      "source_fraction": 1
+    }
+  ]
+}

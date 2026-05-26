@@ -19,6 +19,26 @@ for (const file of fixtureFiles) {
   });
 }
 
+test("single bin when cumulative total equals bin size", () => {
+  const rows = cumbin(
+    [
+      { label: "A", value: 12 },
+      { label: "B", value: 3 },
+      { label: "C", value: 17 }
+    ],
+    { value: "value", binSize: 32 }
+  );
+
+  assert.equal(rows.length, 3);
+  assert.deepEqual([...new Set(rows.map((row) => row.bin))], [0]);
+  assert.deepEqual(rows.map((row) => row.amount), [12, 3, 17]);
+  assert.deepEqual(rows.map((row) => [row.bin_start, row.bin_end]), [
+    [0, 32],
+    [0, 32],
+    [0, 32]
+  ]);
+});
+
 function assertRowsAlmostEqual(actual, expected) {
   assert.equal(actual.length, expected.length);
 
