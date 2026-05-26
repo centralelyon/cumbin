@@ -1,12 +1,12 @@
 # cumbin
 
-Create cumulative bins from tabular data.
+Cumulative bins by value from tabular data.
 
 Example: given values `[12, 3, 17]` and `binSize = 10`, cumulative intervals are `[0, 12)`, `[12, 15)`, and `[15, 32)`. `cumbin` splits those intervals across bins `[0, 10)`, `[10, 20)`, `[20, 30)`, and `[30, 40)`, returning one row per source/bin overlap.
 
 
 ```js
-import { cumbin } from "cumbin";
+import { cumbin } from "@centralelyon/cumbin";
 
 const rows = cumbin(
   [
@@ -84,4 +84,3 @@ npm run test:py
 ```
 
 The tests intentionally read the same files under `fixtures/`, so behavioral changes must update the shared contract rather than one language wrapper.
-

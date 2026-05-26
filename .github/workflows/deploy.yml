@@ -1,0 +1,181 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run shared tests
+        run: npm test
+
+  publish-npm:
+    name: Publish npm
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Read npm package metadata
+        id: npm_meta
+        working-directory: packages/javascript
+        run: |
+          echo "name=$(node -p "require('./package.json').name")" >> "$GITHUB_OUTPUT"
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Check existing npm version
+        id: npm_existing
+        env:
+          PACKAGE_NAME: ${{ steps.npm_meta.outputs.name }}
+          PACKAGE_VERSION: ${{ steps.npm_meta.outputs.version }}
+        run: |
+          if npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version --registry=https://registry.npmjs.org/ >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check npm package contents
+        run: npm pack --workspace packages/javascript --dry-run
+
+      - name: Require NPM_TOKEN
+        if: steps.npm_existing.outputs.exists != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "::error::Missing GitHub repository secret NPM_TOKEN"
+            exit 1
+          fi
+
+      - name: Publish npm package
+        if: steps.npm_existing.outputs.exists != 'true'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --workspace packages/javascript --access public
+
+      - name: Skip already-published npm version
+        if: steps.npm_existing.outputs.exists == 'true'
+        run: echo "${{ steps.npm_meta.outputs.name }}@${{ steps.npm_meta.outputs.version }} is already published."
+
+  publish-pypi:
+    name: Publish PyPI
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tools
+        run: python -m pip install --upgrade build twine
+
+      - name: Read PyPI package metadata
+        id: pypi_meta
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import tomllib
+          from pathlib import Path
+
+          metadata = tomllib.loads(Path("packages/python/pyproject.toml").read_text())
+          project = metadata["project"]
+          print(f"name={project['name']}")
+          print(f"version={project['version']}")
+          PY
+
+      - name: Check existing PyPI version
+        id: pypi_existing
+        env:
+          PACKAGE_NAME: ${{ steps.pypi_meta.outputs.name }}
+          PACKAGE_VERSION: ${{ steps.pypi_meta.outputs.version }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import os
+          import urllib.error
+          import urllib.parse
+          import urllib.request
+
+          name = urllib.parse.quote(os.environ["PACKAGE_NAME"])
+          version = urllib.parse.quote(os.environ["PACKAGE_VERSION"])
+          url = f"https://pypi.org/pypi/{name}/{version}/json"
+
+          try:
+              with urllib.request.urlopen(url, timeout=20) as response:
+                  exists = response.status == 200
+          except urllib.error.HTTPError as error:
+              if error.code == 404:
+                  exists = False
+              else:
+                  raise
+
+          print(f"exists={str(exists).lower()}")
+          PY
+
+      - name: Build Python distributions
+        working-directory: packages/python
+        run: python -m build
+
+      - name: Check Python distributions
+        working-directory: packages/python
+        run: python -m twine check dist/*
+
+      - name: Require PYPI_API_TOKEN
+        if: steps.pypi_existing.outputs.exists != 'true'
+        env:
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          if [ -z "${TWINE_PASSWORD}" ]; then
+            echo "::error::Missing GitHub repository secret PYPI_API_TOKEN"
+            exit 1
+          fi
+
+      - name: Publish PyPI package
+        if: steps.pypi_existing.outputs.exists != 'true'
+        working-directory: packages/python
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: python -m twine upload --non-interactive dist/*
+
+      - name: Skip already-published PyPI version
+        if: steps.pypi_existing.outputs.exists == 'true'
+        run: echo "${{ steps.pypi_meta.outputs.name }} ${{ steps.pypi_meta.outputs.version }} is already published."

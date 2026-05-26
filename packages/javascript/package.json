@@ -1,5 +1,5 @@
 {
-  "name": "cumbin",
+  "name": "@centralelyon/cumbin",
   "version": "0.1.0",
   "description": "Cumulative binning transform for JavaScript.",
   "type": "module",
