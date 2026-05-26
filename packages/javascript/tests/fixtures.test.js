@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import test from "node:test";
 
-import { cumbin } from "../src/index.js";
+import { cumbin } from "../cumbin.js";
 
 const fixturesDir = new URL("../../../fixtures/", import.meta.url);
 const fixtureFiles = (await readdir(fixturesDir))

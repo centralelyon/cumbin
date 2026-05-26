@@ -4,4 +4,4 @@ export {
   default,
   normalizeSpec,
   summarizeBins
-} from "../index.js";
+} from "./cumbin.js";

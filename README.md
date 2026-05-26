@@ -18,6 +18,20 @@ const rows = cumbin(
 );
 ```
 
+In Observable notebooks, import the npm package directly:
+
+```js
+import { cumbin, summarizeBins } from "npm:cumbin"
+```
+
+For direct UNPKG imports:
+
+```js
+cumbin = (await import("https://unpkg.com/cumbin@0.2.1/cumbin.js?module")).default
+```
+
+`index.js` is also included as a compatibility alias.
+
 ```python
 from cumbin import cumbin
 
@@ -63,7 +77,7 @@ Each output row preserves source fields and adds:
 
 The canonical output is tidy tabular data shared by both packages:
 
-- The JavaScript package is an ESM module exporting `cumbin`, `cumulativeBins`, `summarizeBins`, and `normalizeSpec`.
+- The JavaScript package is a dependency-free browser ESM module exporting `cumbin`, `cumulativeBins`, `summarizeBins`, and `normalizeSpec`.
 - The Python package exports `cumbin`, `cumulative_bins`, and `summarize_bins`.
 - Optional Pandas helpers live in `cumbin.pandas`, including `cumbin_frame` for DataFrame workflows.
 - Downstream plotting or analysis code should consume the returned rows directly instead of relying on package-specific visualization adapters.

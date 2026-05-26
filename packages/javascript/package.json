@@ -1,21 +1,34 @@
 {
   "name": "cumbin",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "Cumulative binning transform for JavaScript.",
   "type": "module",
+  "main": "./cumbin.js",
+  "module": "./cumbin.js",
+  "browser": "./cumbin.js",
   "exports": {
-    ".": "./src/index.js"
+    ".": {
+      "import": "./cumbin.js",
+      "default": "./cumbin.js"
+    }
   },
   "files": [
-    "src"
+    "index.js",
+    "cumbin.js",
+    "README.md",
+    "LICENSE"
   ],
+  "sideEffects": false,
   "scripts": {
-    "test": "node --test"
+    "test": "node --test && node --input-type=module -e \"const entry = await import('./cumbin.js'); const alias = await import('./index.js'); if (typeof entry.default !== 'function') throw new Error('Missing cumbin.js default export'); if (typeof entry.cumbin !== 'function') throw new Error('Missing cumbin.js named export'); if (alias.default !== entry.default) throw new Error('index.js default does not re-export cumbin.js'); console.log('cumbin exports OK');\""
   },
   "keywords": [
     "binning",
     "cumsum",
     "data-transform",
+    "esm",
+    "browser",
+    "observable",
     "tabular"
   ],
   "license": "MIT",
@@ -23,5 +36,9 @@
     "type": "git",
     "url": "git+https://github.com/centralelyon/cumbin.git",
     "directory": "packages/javascript"
+  },
+  "homepage": "https://github.com/centralelyon/cumbin#readme",
+  "bugs": {
+    "url": "https://github.com/centralelyon/cumbin/issues"
   }
 }

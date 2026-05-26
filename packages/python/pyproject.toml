@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cumbin"
-version = "0.1.0"
+version = "0.2.1"
 description = "Cumulative binning transform for Python and Pandas."
 readme = { text = "See the monorepo README for cumbin usage, fixtures, and examples.", content-type = "text/markdown" }
 requires-python = ">=3.10"
