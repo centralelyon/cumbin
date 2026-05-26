@@ -1,5 +1,5 @@
 {
-  "name": "@centralelyon/cumbin",
+  "name": "cumbin",
   "version": "0.1.0",
   "description": "Cumulative binning transform for JavaScript.",
   "type": "module",
@@ -21,7 +21,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cumbin/cumbin.git",
+    "url": "git+https://github.com/centralelyon/cumbin.git",
     "directory": "packages/javascript"
   }
 }

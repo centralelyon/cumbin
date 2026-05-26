@@ -1,5 +1,5 @@
 {
-  "name": "@centralelyon/cumbin",
+  "name": "cumbin-monorepo",
   "version": "0.1.0",
   "private": true,
   "description": "Cumulative binning transform with shared fixtures for JavaScript and Python packages.",

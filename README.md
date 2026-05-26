@@ -6,7 +6,7 @@ Example: given values `[12, 3, 17]` and `binSize = 10`, cumulative intervals are
 
 
 ```js
-import { cumbin } from "@centralelyon/cumbin";
+import { cumbin } from "cumbin";
 
 const rows = cumbin(
   [

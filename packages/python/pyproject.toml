@@ -26,8 +26,8 @@ pandas = ["pandas>=2.0"]
 dev = ["build>=1.2", "pandas>=2.0"]
 
 [project.urls]
-Homepage = "https://github.com/cumbin/cumbin"
-Repository = "https://github.com/cumbin/cumbin"
+Homepage = "https://github.com/centralelyon/cumbin"
+Repository = "https://github.com/centralelyon/cumbin"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/cumbin"]
