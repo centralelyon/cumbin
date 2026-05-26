@@ -1,0 +1,2 @@
+# cumbin
+Cumulative binning
