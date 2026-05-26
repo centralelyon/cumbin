@@ -1,0 +1,17 @@
+{
+  "name": "cumbin-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cumulative binning transform with shared fixtures for JavaScript and Python packages.",
+  "type": "module",
+  "workspaces": [
+    "packages/javascript"
+  ],
+  "scripts": {
+    "test": "npm run test --workspace cumbin && python3 -m unittest discover -s packages/python/tests",
+    "test:js": "npm run test --workspace cumbin",
+    "test:py": "python3 -m unittest discover -s packages/python/tests"
+  },
+  "license": "MIT"
+}
+

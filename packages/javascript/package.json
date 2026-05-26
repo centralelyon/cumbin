@@ -1,0 +1,27 @@
+{
+  "name": "cumbin",
+  "version": "0.1.0",
+  "description": "Cumulative binning transform for JavaScript.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "binning",
+    "cumsum",
+    "data-transform",
+    "tabular"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cumbin/cumbin.git",
+    "directory": "packages/javascript"
+  }
+}

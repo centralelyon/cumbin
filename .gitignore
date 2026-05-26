@@ -1,0 +1,9 @@
+node_modules/
+*.tgz
+
+__pycache__/
+*.py[cod]
+
+packages/python/build/
+packages/python/dist/
+*.egg-info/

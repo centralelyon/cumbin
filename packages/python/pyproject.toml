@@ -1,0 +1,39 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cumbin"
+version = "0.1.0"
+description = "Cumulative binning transform for Python and Pandas."
+readme = { text = "See the monorepo README for cumbin usage, fixtures, and examples.", content-type = "text/markdown" }
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "cumbin contributors" }
+]
+keywords = [
+  "binning",
+  "cumsum",
+  "data-transform",
+  "pandas",
+  "tabular"
+]
+dependencies = []
+
+[project.optional-dependencies]
+pandas = ["pandas>=2.0"]
+dev = ["build>=1.2", "pandas>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/cumbin/cumbin"
+Repository = "https://github.com/cumbin/cumbin"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cumbin"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "src/cumbin",
+  "pyproject.toml"
+]

@@ -1,0 +1,63 @@
+{
+  "name": "thresholds",
+  "spec": {
+    "value": "value",
+    "thresholds": [
+      0,
+      8,
+      20
+    ]
+  },
+  "input": [
+    {
+      "label": "A",
+      "value": 5
+    },
+    {
+      "label": "B",
+      "value": 12
+    }
+  ],
+  "expected": [
+    {
+      "label": "A",
+      "value": 5,
+      "bin": 0,
+      "bin_start": 0,
+      "bin_end": 8,
+      "amount": 5,
+      "source_index": 0,
+      "source_start": 0,
+      "source_end": 5,
+      "source_amount": 5,
+      "source_fraction": 1
+    },
+    {
+      "label": "B",
+      "value": 12,
+      "bin": 0,
+      "bin_start": 0,
+      "bin_end": 8,
+      "amount": 3,
+      "source_index": 1,
+      "source_start": 5,
+      "source_end": 17,
+      "source_amount": 12,
+      "source_fraction": 0.25
+    },
+    {
+      "label": "B",
+      "value": 12,
+      "bin": 1,
+      "bin_start": 8,
+      "bin_end": 20,
+      "amount": 9,
+      "source_index": 1,
+      "source_start": 5,
+      "source_end": 17,
+      "source_amount": 12,
+      "source_fraction": 0.75
+    }
+  ]
+}
+
