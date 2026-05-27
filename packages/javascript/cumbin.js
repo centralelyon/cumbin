@@ -18,7 +18,7 @@ export function cumbin(data, spec = {}) {
   Array.from(data).forEach((row, sourceIndex) => {
     const groupKey = keyFor(row, config.groupBy);
     const cursor = cursors.has(groupKey) ? cursors.get(groupKey) : config.origin;
-    const sourceEnd = config.cumulative
+    const sourceEnd = config.cumulative != null
       ? numberFrom(read(row, config.cumulative), config.cumulative)
       : cursor + numberFrom(read(row, config.value), config.value);
     const sourceStart = cursor;
@@ -93,7 +93,9 @@ export function summarizeBins(rows, options = {}) {
 export function normalizeSpec(spec) {
   const value = spec.value ?? spec.amount;
   const cumulative = spec.cumulative;
-  const thresholds = spec.thresholds == null ? null : spec.thresholds.map(Number);
+  const thresholds = spec.thresholds == null
+    ? null
+    : spec.thresholds.map((value) => numberFrom(value, "thresholds"));
   const binSize = spec.binSize ?? spec.bin_size;
   const origin = spec.origin == null ? 0 : numberFrom(spec.origin, "origin");
 
@@ -106,6 +108,10 @@ export function normalizeSpec(spec) {
   }
 
   if (thresholds) {
+    if (thresholds.length < 2) {
+      throw new RangeError("cumbin thresholds must include at least two boundaries");
+    }
+
     for (let index = 1; index < thresholds.length; index += 1) {
       if (!(thresholds[index] > thresholds[index - 1])) {
         throw new RangeError("cumbin thresholds must be strictly increasing");

@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { join } from "node:path";
 import test from "node:test";
 
-import { cumbin } from "../cumbin.js";
+import { cumbin, normalizeSpec, summarizeBins } from "../cumbin.js";
 
 const fixturesDir = new URL("../../../fixtures/", import.meta.url);
 const fixtureFiles = (await readdir(fixturesDir))
@@ -36,6 +36,83 @@ test("single bin when cumulative total equals bin size", () => {
     [0, 32],
     [0, 32],
     [0, 32]
+  ]);
+});
+
+test("cumulative mode accepts an empty string field name", () => {
+  const rows = cumbin(
+    [
+      { "": 4 },
+      { "": 11 }
+    ],
+    { cumulative: "", binSize: 10 }
+  );
+
+  assert.deepEqual(rows.map((row) => row.amount), [4, 6, 1]);
+  assert.deepEqual(rows.map((row) => row.source_start), [0, 4, 4]);
+  assert.deepEqual(rows.map((row) => row.source_end), [4, 11, 11]);
+});
+
+test("rejects thresholds with fewer than two boundaries", () => {
+  assert.throws(
+    () => normalizeSpec({ value: "value", thresholds: [0] }),
+    /thresholds must include at least two boundaries/
+  );
+});
+
+test("rejects non-finite thresholds", () => {
+  assert.throws(
+    () => normalizeSpec({ value: "value", thresholds: [0, Number.NaN] }),
+    /expected a finite number for thresholds/
+  );
+});
+
+test("includeSource false only emits transform fields", () => {
+  const rows = cumbin(
+    [{ label: "A", value: 12 }],
+    { value: "value", binSize: 10, includeSource: false }
+  );
+
+  assert.deepEqual(rows, [
+    {
+      bin: 0,
+      bin_start: 0,
+      bin_end: 10,
+      amount: 10,
+      source_index: 0,
+      source_start: 0,
+      source_end: 12,
+      source_amount: 12,
+      source_fraction: 10 / 12
+    },
+    {
+      bin: 1,
+      bin_start: 10,
+      bin_end: 20,
+      amount: 2,
+      source_index: 0,
+      source_start: 0,
+      source_end: 12,
+      source_amount: 12,
+      source_fraction: 2 / 12
+    }
+  ]);
+});
+
+test("summarizeBins aggregates amounts by bin and group fields", () => {
+  const rows = cumbin(
+    [
+      { group: "north", value: 6 },
+      { group: "south", value: 4 },
+      { group: "north", value: 7 }
+    ],
+    { value: "value", binSize: 10, groupBy: "group" }
+  );
+
+  assert.deepEqual(summarizeBins(rows, { groupBy: "group" }), [
+    { bin: 0, bin_start: 0, bin_end: 10, amount: 10, count: 2, group: "north" },
+    { bin: 0, bin_start: 0, bin_end: 10, amount: 4, count: 1, group: "south" },
+    { bin: 1, bin_start: 10, bin_end: 20, amount: 3, count: 1, group: "north" }
   ]);
 });
 

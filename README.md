@@ -2,8 +2,33 @@
 
 Cumulative bins by value from tabular data.
 
-Example: given values `[12, 3, 17]` and `binSize = 10`, cumulative intervals are `[0, 12)`, `[12, 15)`, and `[15, 32)`. `cumbin` splits those intervals across bins `[0, 10)`, `[10, 20)`, `[20, 30)`, and `[30, 40)`, returning one row per source/bin overlap.
+Example with values below and `binSize = 10`:
 
+```
+[
+  { label: "A", value: 12},
+  { label: "B", value: 3},
+  { label: "C", value: 17}
+]
+```
+
+It returns 4 bins with explicit overflow attribution:
+
+```
+[
+  { label: "A", value: 12, bin: 0, bin_start: 0, bin_end: 10, amount: 10, source_index: 0, source_start: 0, source_end: 12, source_amount: 12, source_fraction: 0.8333333333333334 },
+  { label: "A", value: 12, bin: 1, bin_start: 10, bin_end: 20, amount: 2, source_index: 0, source_start: 0, source_end: 12, source_amount: 12, source_fraction: 0.16666666666666666 },
+  { label: "B", value: 3, bin: 1, bin_start: 10, bin_end: 20, amount: 3, source_index: 1, source_start: 12, source_end: 15, source_amount: 3, source_fraction: 1 },
+  { label: "C", value: 17, bin: 1, bin_start: 10, bin_end: 20, amount: 7, source_index: 2, source_start: 15, source_end: 32, source_amount: 17, source_fraction: 0.4117647058823529 },
+]
+```
+
+That can be illustrated as:
+
+<img width="591" height="432" alt="Image" src="https://github.com/user-attachments/assets/8a9ecc9a-cc29-4028-9e49-c84a4f69ac49" />
+
+
+## JavaScript Usage
 
 ```js
 import { cumbin } from "cumbin";
@@ -72,6 +97,25 @@ Each output row preserves source fields and adds:
 - `source_start`, `source_end`: source cumulative interval.
 - `source_amount`: original interval size.
 - `source_fraction`: `amount / source_amount`.
+
+## Python Usage
+
+```python
+from cumbin import cumbin
+
+rows = cumbin(
+    [
+        {"label": "A", "value": 12},
+        {"label": "B", "value": 3},
+        {"label": "C", "value": 17},
+    ],
+    {"value": "value", "binSize": 10},
+)
+```
+
+The output is the same as the JavaScript version, with the same fields and semantics.
+
+<img width="609" height="286" alt="Image" src="https://github.com/user-attachments/assets/0caf9984-22eb-42d6-a3b3-69a9e79cee1b" />
 
 ## JavaScript And Python APIs
 
